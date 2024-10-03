@@ -8,11 +8,16 @@ class Message:
 
 
 class Client:
-    def __init__(self, ip, port, address):
+    def __init__(self, ip, port, address, name):
         self.ip = ip
         self.port = port
         self.address = address
+        self.name = name
         self.cached_messages = list()
+        self.id = hash(self.ip + port)
+
+    def __hash__(self):
+        return self.id
 
 
 class P2PConnection:
@@ -23,5 +28,4 @@ class P2PConnection:
         pass
 
     def send_message(self, message: Message):
-       pass
-
+        pass
