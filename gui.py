@@ -68,30 +68,23 @@ def resize_viewport():
 
 
 def update_bounds():
-    if not _initialized:
-        return
-    add_client_btn_pos = dpg.get_item_pos(add_client_btn)
-    add_client_btn_size = dpg.get_item_rect_size(add_client_btn)
-    sidebar_size = dpg.get_item_rect_size(sidebar)
+    pass
+    # if not _initialized:
+    #     return
+    # add_client_btn_pos = dpg.get_item_pos(add_client_btn)
+    # add_client_btn_size = dpg.get_item_rect_size(add_client_btn)
+    # sidebar_size = dpg.get_item_rect_size(sidebar)
     
-    send_msg_btn_pos = dpg.get_item_pos(send_message_btn)
-    send_msg_btn_size = dpg.get_item_rect_size(send_message_btn)
+    # send_msg_btn_pos = dpg.get_item_pos(send_message_btn)
+    # send_msg_btn_size = dpg.get_item_rect_size(send_message_btn)
 
-    chatview_size = dpg.get_item_rect_size(chat_window)
-    dpg.set_item_pos(add_client_btn, [add_client_btn_pos[0], sidebar_size[1] - add_client_btn_size[1]])
-    dpg.set_item_pos(send_message_btn, [chatview_size[0] - send_msg_btn_size[0], chatview_size[1] - send_msg_btn_size[1]])
+    # chatview_size = dpg.get_item_rect_size(chat_window)
+    # dpg.set_item_pos(add_client_btn, [add_client_btn_pos[0], sidebar_size[1] - add_client_btn_size[1]])
+    # dpg.set_item_pos(send_message_btn, [chatview_size[0] - send_msg_btn_size[0], chatview_size[1] - send_msg_btn_size[1]])
 
 
 def init():
     dpg.create_context()
-
-    # dpg.create_viewport(title='PyChat', resizable=False, decorated=False, width=800, height=600)
-    # # the order of execution of following function matters, do not change them
-    # dpg.setup_dearpygui()
-    # dpg.show_viewport()
-    # dpg.start_dearpygui()
-    # dpg.destroy_context()
-    # add_callbacks()
     print('Starting dpg')
 
     dpg_thread_on = True
@@ -161,13 +154,12 @@ def apply_themes():
 def show():
     if not _initialized:
         raise RuntimeError("GUI has not been initialized")
-    global window, chat_window, sidebar, add_client_btn, close_btn, running, min_btn,send_message_btn
+    global window, chat_window, sidebar, add_client_btn, close_btn, running, min_btn,send_message_btn, text_box
 
     with dpg.window(label="Main", no_title_bar=True, no_move=True, no_resize=False, min_size=[600, 400]) as window:
+
         # dpg.set_primary_window(window, True)
-        with dpg.group(horizontal=True):
-            close_btn = dpg.add_button(label="close", callback=close_window)
-            min_btn = dpg.add_button(label="minimize", callback=dpg.minimize_viewport)
+
         with dpg.handler_registry():
             dpg.add_mouse_drag_handler(button=dpg.mvMouseButton_Left, callback=move_viewport)
             dpg.add_mouse_down_handler(button=dpg.mvMouseButton_Left, callback=save_viewport_location)
@@ -179,21 +171,33 @@ def show():
             dpg.add_item_resize_handler(callback=resize_viewport)
             dpg.bind_item_handler_registry(window, resize_handler)
 
-        with dpg.group(horizontal=True):
+
+        with dpg.group(horizontal=True,height=50):
+            close_btn = dpg.add_button(label="close", callback=close_window)
+            min_btn = dpg.add_button(label="minimize", callback=dpg.minimize_viewport)
+        with dpg.group(horizontal=True,height=-1):
             # side bar
             with dpg.child_window(width=sidebar_width, autosize_y=True, border=False,
                                   autosize_x=False) as sidebar:
-                add_client_btn = dpg.add_button(label="Add New", width=-1, height=30)
+                pass
                 # sets the theme for sidebar
             # text area
             with dpg.child_window(height=-1, border=False) as chat_window:
-                send_message_btn = dpg.add_button(label="send", height=30)
+                pass
                 # sets the theme for chatwindow
-        apply_themes()
-        add_callbacks()
-        dpg.show_viewport()
+        with dpg.group(horizontal=True, height=50):    
+            add_client_btn = dpg.add_button(label="Add New", width=100, height=-1)
+            text_box = dpg.add_input_text(label="Message", width=400, height=-1)
+            send_message_btn = dpg.add_button(label="send", width=100, height=-1)
+    
+    apply_themes()
+    add_callbacks()
+        
+    for i in range(0,100):
+        dpg.add_text("text "+str(i), parent=chat_window)
+    dpg.show_viewport()
 
-        dpg.start_dearpygui()
-        print('Stopping dpg')
-        dpg.destroy_context()
-        print('Destroyed context')
+    dpg.start_dearpygui()
+    print('Stopping dpg')
+    dpg.destroy_context()
+    print('Destroyed context')
